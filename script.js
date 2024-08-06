@@ -1,5 +1,3 @@
-// script.js
-
 // Sélection des éléments du DOM
 const moneyLabel = document.getElementById('moneyLabel');
 const playButton = document.getElementById('playButton');
@@ -42,8 +40,8 @@ function playGame() {
             showMessage("Game Over ! Vous êtes mort !!!", 'error', 10000); // Afficher pendant 10 secondes
             playButton.disabled = true; // Désactiver le bouton jouer
             setTimeout(() => {
-                window.open('', '_self').close(); // Essayer de fermer l'onglet après 3 secondes
-            }, 3000);
+                window.open('', '_self').close(); // Essayer de fermer l'onglet après 10 secondes
+            }, 10000);
         } else {
             money += 1000;
             updateMoneyLabel();
@@ -58,10 +56,10 @@ function cashout() {
         showMessage(`Vous avez encaissé ${money.toLocaleString()} €`, 'success', 10000); // Afficher pendant 10 secondes
         // Réinitialiser le jeu après avoir encaissé
         setTimeout(() => {
-            resetGame(); // Réinitialiser le jeu après 4 secondes
+            resetGame(); // Réinitialiser le jeu après 10 secondes
             // Essayer de fermer l'onglet après la réinitialisation
             window.open('', '_self').close();
-        }, 4000);
+        }, 10000);
     } else {
         showMessage("Le jeu est terminé. Vous ne pouvez plus encaisser.", 'error', 3000); // Afficher pendant 3 secondes
     }
