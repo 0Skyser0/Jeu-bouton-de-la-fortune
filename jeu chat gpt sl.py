@@ -1,36 +1,83 @@
+import tkinter as tk
+from tkinter import messagebox
 import random
-import time
 
-def play_game():
-    money = 0
-    game_over = False
+class GameApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Jeu de Chance")
+        
+        # Initialiser les variables du jeu
+        self.money = 0
+        self.game_over = False
 
-    while not game_over:
-        print(f"\nArgent actuel : {money} €")
-        print("1. Jouer")
-        print("2. Encaisser")
-        print("3. Quitter")
+        # Création du bouton doré pour jouer
+        self.play_button = tk.Button(root, text="Jouer", font=('Helvetica', 16), bg='gold', command=self.play_game)
+        self.play_button.pack(pady=20)
+        
+        # Création du label pour afficher l'argent
+        self.money_label = tk.Label(root, text=f"Argent actuel : {self.money} €", font=('Helvetica', 16))
+        self.money_label.pack(pady=10)
 
-        choice = input("Choisissez une option (1/2/3) : ")
+        # Création du bouton d'encaissement
+        self.cashout_button = tk.Button(root, text="Encaisser", font=('Helvetica', 16), command=self.cashout)
+        self.cashout_button.pack(pady=5)
+        
+        # Création du bouton de quitter
+        self.quit_button = tk.Button(root, text="Quitter", font=('Helvetica', 16), command=self.quit_game)
+        self.quit_button.pack(pady=5)
+        
+        # Création du bouton pour réessayer après Game Over
+        self.retry_button = tk.Button(root, text="Essayer à nouveau", font=('Helvetica', 16), command=self.reset_game)
+        self.retry_button.pack(pady=5)
+        self.retry_button.pack_forget()  # Masquer le bouton au début
 
-        if choice == '1':
+    def play_game(self):
+        """Gère la logique du jeu lorsque le joueur appuie sur 'Jouer'."""
+        if not self.game_over:
             if random.randint(1, 100) == 1:  # 1 chance sur 100 pour le game over
-                game_over = True
-                print("Game Over! Vous avez perdu.")
-                time.sleep(5)  # Attendre 5 secondes avant de quitter
+                self.game_over = True
+                self.show_message("Game Over ! Vous avez perdu.")
+                self.retry_button.pack(pady=5)  # Afficher le bouton pour réessayer
+                self.play_button.config(state=tk.DISABLED)  # Désactiver le bouton jouer
             else:
-                money += 1000
-                print("Vous avez gagné 1 000 € !")
-        elif choice == '2':
-            print(f"Vous avez encaissé {money} €")
-            time.sleep(5)  # Attendre 5 secondes avant de quitter
-            break
-        elif choice == '3':
-            print(f"Vous avez quitté le jeu avec {money} €")
-            time.sleep(5)  # Attendre 5 secondes avant de quitter
-            break
+                self.money += 1000
+                self.update_money_label()
+                self.show_message("Vous avez gagné 1 000 € !")
+
+    def cashout(self):
+        """Gère l'encaissement de l'argent."""
+        if not self.game_over:
+            self.show_message(f"Vous avez encaissé {self.money} €")
+            self.reset_game()  # Réinitialiser le jeu après avoir encaissé
         else:
-            print("Choix invalide, veuillez réessayer.")
+            self.show_message("Le jeu est terminé. Vous ne pouvez plus encaisser.")
+
+    def quit_game(self):
+        """Gère la fermeture du jeu."""
+        if not self.game_over:
+            self.show_message(f"Vous avez quitté le jeu avec {self.money} €")
+        else:
+            self.show_message("Le jeu est terminé.")
+        self.root.after(5000, self.root.quit)  # Attendre 5 secondes avant de quitter
+
+    def reset_game(self):
+        """Réinitialiser les variables du jeu et l'interface."""
+        self.money = 0
+        self.game_over = False
+        self.update_money_label()
+        self.retry_button.pack_forget()  # Masquer le bouton réessayer
+        self.play_button.config(state=tk.NORMAL)  # Réactiver le bouton jouer
+
+    def update_money_label(self):
+        """Mettre à jour l'affichage de l'argent actuel."""
+        self.money_label.config(text=f"Argent actuel : {self.money} €")
+
+    def show_message(self, message):
+        """Afficher un message d'information."""
+        messagebox.showinfo("Information", message)
 
 if __name__ == "__main__":
-    play_game()
+    root = tk.Tk()
+    app = GameApp(root)
+    root.mainloop()
