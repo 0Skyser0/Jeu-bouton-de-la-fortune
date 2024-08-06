@@ -1,25 +1,37 @@
+// script.js
+
 // Sélection des éléments du DOM
 const moneyLabel = document.getElementById('moneyLabel');
 const playButton = document.getElementById('playButton');
 const cashoutButton = document.getElementById('cashoutButton');
-const retryButton = document.getElementById('retryButton');
-const quitButton = document.getElementById('quitButton');
 const messageBox = document.getElementById('messageBox');
 
 // Initialisation des variables du jeu
 let money = 0;
 let gameOver = false;
 
-// Fonction pour afficher les messages
-function showMessage(message) {
+// Fonction pour afficher les messages avec une durée spécifique
+function showMessage(message, type, duration) {
     messageBox.textContent = message;
     messageBox.style.display = 'block'; // Afficher la zone de message
-    setTimeout(() => messageBox.style.display = 'none', 3000); // Masquer après 3 secondes
+
+    // Appliquer la classe CSS en fonction du type de message
+    if (type === 'success') {
+        messageBox.className = 'message-box message-success';
+    } else if (type === 'error') {
+        messageBox.className = 'message-box message-error';
+    }
+
+    // Masquer le message après la durée spécifiée
+    setTimeout(() => {
+        messageBox.style.display = 'none';
+    }, duration);
 }
 
 // Fonction pour mettre à jour l'affichage de l'argent
 function updateMoneyLabel() {
-    moneyLabel.textContent = `Argent actuel : ${money} €`;
+    // Formater money avec des séparateurs de milliers
+    moneyLabel.textContent = `Argent actuel : ${money.toLocaleString()} €`;
 }
 
 // Fonction pour jouer au jeu
@@ -27,13 +39,15 @@ function playGame() {
     if (!gameOver) {
         if (Math.random() < 0.01) { // 1 chance sur 100 pour le game over
             gameOver = true;
-            showMessage("Game Over ! Vous avez perdu.");
-            retryButton.style.display = 'inline-block'; // Afficher le bouton pour réessayer
+            showMessage("Game Over ! Vous avez perdu.", 'error', 3000); // Afficher pendant 3 secondes
             playButton.disabled = true; // Désactiver le bouton jouer
+            setTimeout(() => {
+                window.open('', '_self').close(); // Essayer de fermer l'onglet après 3 secondes
+            }, 3000);
         } else {
             money += 1000;
             updateMoneyLabel();
-            showMessage("Vous avez gagné 1 000 € !");
+            showMessage("Vous avez gagné 1 000 € !", 'success', 4000); // Afficher pendant 4 secondes
         }
     }
 }
@@ -41,23 +55,16 @@ function playGame() {
 // Fonction pour encaisser l'argent
 function cashout() {
     if (!gameOver) {
-        showMessage(`Vous avez encaissé ${money} €`);
-        resetGame(); // Réinitialiser le jeu après avoir encaissé
+        showMessage(`Vous avez encaissé ${money.toLocaleString()} €`, 'success', 4000); // Afficher pendant 4 secondes
+        // Réinitialiser le jeu après avoir encaissé
+        setTimeout(() => {
+            resetGame(); // Réinitialiser le jeu après 4 secondes
+            // Essayer de fermer l'onglet après la réinitialisation
+            window.open('', '_self').close();
+        }, 4000);
     } else {
-        showMessage("Le jeu est terminé. Vous ne pouvez plus encaisser.");
+        showMessage("Le jeu est terminé. Vous ne pouvez plus encaisser.", 'error', 3000); // Afficher pendant 3 secondes
     }
-}
-
-// Fonction pour quitter le jeu
-function quitGame() {
-    if (!gameOver) {
-        showMessage(`Vous avez quitté le jeu avec ${money} €`);
-    } else {
-        showMessage("Le jeu est terminé.");
-    }
-    setTimeout(() => {
-        window.close(); // Attendre 5 secondes avant de fermer la fenêtre
-    }, 5000);
 }
 
 // Fonction pour réinitialiser le jeu
@@ -65,15 +72,13 @@ function resetGame() {
     money = 0;
     gameOver = false;
     updateMoneyLabel();
-    retryButton.style.display = 'none'; // Masquer le bouton réessayer
+    messageBox.style.display = 'none'; // Masquer la zone de message
     playButton.disabled = false; // Réactiver le bouton jouer
 }
 
 // Gestion des événements des boutons
 playButton.addEventListener('click', playGame);
 cashoutButton.addEventListener('click', cashout);
-retryButton.addEventListener('click', resetGame);
-quitButton.addEventListener('click', quitGame);
 
 // Initialisation de l'affichage
-retryButton.style.display = 'none'; // Masquer le bouton réessayer au début
+playButton.disabled = false; // Réactiver le bouton jouer au début
