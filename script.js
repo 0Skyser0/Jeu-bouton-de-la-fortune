@@ -39,7 +39,7 @@ function playGame() {
     if (!gameOver) {
         if (Math.random() < 0.01) { // 1 chance sur 100 pour le game over
             gameOver = true;
-            showMessage("Game Over ! Vous avez perdu.", 'error', 3000); // Afficher pendant 3 secondes
+            showMessage("Game Over ! Vous êtes mort !!!", 'error', 10000); // Afficher pendant 10 secondes
             playButton.disabled = true; // Désactiver le bouton jouer
             setTimeout(() => {
                 window.open('', '_self').close(); // Essayer de fermer l'onglet après 3 secondes
@@ -55,7 +55,7 @@ function playGame() {
 // Fonction pour encaisser l'argent
 function cashout() {
     if (!gameOver) {
-        showMessage(`Vous avez encaissé ${money.toLocaleString()} €`, 'success', 4000); // Afficher pendant 4 secondes
+        showMessage(`Vous avez encaissé ${money.toLocaleString()} €`, 'success', 10000); // Afficher pendant 10 secondes
         // Réinitialiser le jeu après avoir encaissé
         setTimeout(() => {
             resetGame(); // Réinitialiser le jeu après 4 secondes
